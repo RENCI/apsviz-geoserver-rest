@@ -416,6 +416,45 @@ class Geoserver:
         except Exception as e:
             return 'Error: {}'.format(e)
 
+    def create_imagemosaic(self, path, workspace=None, lyr_name=None):
+        """
+        create imagemosaic from data in a zipfile
+        """
+        file_type = 'imagemosaic'
+
+        try:
+            file_size = os.path.getsize(path)
+
+            c = pycurl.Curl()
+
+            if lyr_name:
+                file_name = lyr_name
+
+            else:
+                file_name = os.path.basename(path)
+                f = file_name.split(".")
+                if len(f) > 0:
+                    file_name = f[0]
+
+            if workspace is None:
+                workspace = 'default'
+
+            c.setopt(pycurl.USERPWD, self.username + ':' + self.password)
+            # file_type = file_type.lower()
+            c.setopt(c.URL, '{0}/rest/workspaces/{1}/coveragestores/{2}/file.{3}'.format(
+                self.service_url, workspace, file_name, file_type))
+            c.setopt(pycurl.HTTPHEADER, [
+                "Content-type:application/zip"])
+            c.setopt(pycurl.READFUNCTION, FileReader(
+                open(path, 'rb')).read_callback)
+            c.setopt(pycurl.INFILESIZE, file_size)
+            c.setopt(pycurl.POST, 1)
+            c.setopt(pycurl.UPLOAD, 1)
+            c.perform()
+            c.close()
+        except Exception as e:
+            return 'Error: {}'.format(e)
+
     def create_featurestore(self, store_name, workspace=None, db='postgres', host='localhost', port=5432, schema='public', pg_user='postgres', pg_password='admin', overwrite=False):
         """
         Postgis store for connecting postgres with geoserver
