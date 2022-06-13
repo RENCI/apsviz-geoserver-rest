@@ -1157,3 +1157,26 @@ class Geoserver:
 
         except Exception as e:
             return 'Error: {}'.format(e)
+
+    def set_default_style(self, workspace, layer_name, style_name):
+        """
+        update default style for a layer
+        """
+        try:
+            url = '{0}/rest/layers/{1}:{2}'.format(self.service_url, workspace, layer_name)
+            data = "<layer><defaultStyle><name>{0}</name></defaultStyle></layer>".format(style_name)
+            headers = {"content-type": "application/xml"}
+            r = requests.put(url, data, auth=(
+                self.username, self.password), headers=headers)
+
+            if r.status_code == 201:
+                return "{0} Default style {1} set!".format(r.status_code, style_name)
+
+            if r.status_code == 401:
+                raise Exception('Cannot update default style')
+
+            else:
+                raise Exception("Cannot update default style")
+
+        except Exception as e:
+            return 'Error: {}'.format(e)
