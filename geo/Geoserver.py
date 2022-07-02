@@ -267,7 +267,11 @@ class Geoserver:
                     self.service_url, workspace, style_name)
 
             r = requests.get(url, auth=(self.username, self.password))
-            return r.json()
+            # make sure style was found
+            if r.status_code == 404:
+                return None
+            else:
+                return r.json()
 
         except Exception as e:
             return 'get_style error: {}'.format(e)
