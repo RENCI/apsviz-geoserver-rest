@@ -1166,6 +1166,7 @@ class Geoserver:
         """
         update default style for a layer
         """
+
         try:
             url = '{0}/rest/layers/{1}:{2}'.format(self.service_url, workspace, layer_name)
             data = "<layer><defaultStyle><name>{0}</name></defaultStyle></layer>".format(style_name)
@@ -1173,7 +1174,7 @@ class Geoserver:
             r = requests.put(url, data, auth=(
                 self.username, self.password), headers=headers)
 
-            if r.status_code == 201:
+            if r.status_code == 200:
                 return "{0} Default style {1} set!".format(r.status_code, style_name)
 
             if r.status_code == 401:
