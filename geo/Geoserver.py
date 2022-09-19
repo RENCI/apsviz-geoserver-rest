@@ -616,7 +616,7 @@ class Geoserver:
                 "Accept": "application/xml",
             }
 
-            if isinstance(data, dict):
+            if isinstance(path, dict):
                 path = prepare_zip_file(store_name, path)
 
             url = '{0}/rest/workspaces/{1}/datastores/{2}/file.{3}'.format(
